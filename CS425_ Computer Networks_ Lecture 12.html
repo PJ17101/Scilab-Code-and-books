@@ -1,0 +1,235 @@
+
+<!-- saved from url=(0057)https://www.cse.iitk.ac.in/users/dheeraj/cs425/lec12.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<title>
+CS425: Computer Networks: Lecture 12
+</title>
+</head>
+<body text="BLACK" bgcolor="#ffffff"><a name="top"></a>
+
+<center>
+<h1>Computer Networks (CS425)</h1>
+<h3>Instructor: Dr. Dheeraj Sanghi</h3>
+</center>
+
+<a href="https://www.cse.iitk.ac.in/users/dheeraj/cs425/lec11.html">Prev</a>|
+<a href="https://www.cse.iitk.ac.in/users/dheeraj/cs425/lec13.html">Next</a>|
+<a href="https://www.cse.iitk.ac.in/users/dheeraj/cs425/index.html">Index</a>
+<hr color="black">
+<center><h2>Routing Algorithms</h2></center>
+<h3>Non-Hierarchical Routing</h3>
+In this type of routing, interconnected networks are viewed as a single network, where bridges, routers and gateways are just additional nodes.
+<ul>
+<li>Every node keeps information about every other node in the network
+</li><li>In case of adaptive routing, the routing calculations are done and updated for all the nodes. 
+</li></ul>
+The above two are also the disadvantages of non-hierarchical routing, since the table sizes and the routing calculations become too large as the networks get bigger.  So this type of routing is feasible only for small networks.
+
+<h3>Hierarchical Routing</h3>
+This is essentially a 'Divide and Conquer' strategy. The network is divided into different regions and a router for a particular region knows only about its own domain and other routers. Thus, the network is viewed at two levels:
+<ol>
+<li>The Sub-network level, where each node in a region has information about its peers in the same region and about the region's interface with other regions. Different regions may have different 'local' routing algorithms. Each local algorithm handles the traffic between nodes of the same region and also directs the outgoing packets to the appropriate interface.
+</li><li>The Network Level, where each region is considered as a single node connected to its interface nodes. The routing algorithms at this level handle the routing of packets between two interface nodes, and is isolated from intra-regional transfer.
+</li></ol>
+Networks can  be organized in hierarchies of many levels; e.g. local networks of a city at one level, the cities of a country at a level above it, and finally  the network of all nations.
+<p>
+In Hierarchical routing, the interfaces need to store information about:
+</p><ul>
+<li>All nodes in its region which are at one level below it. 
+</li><li>Its peer interfaces. 
+</li><li>At least one interface at a level above it, for outgoing packages.
+</li></ul>
+Advantages of Hierarchical Routing : 
+<ul>
+<li>Smaller sizes of routing tables. 
+</li><li>Substantially lesser calculations and updates of routing tables. 
+</li></ul>
+Disadvantage : 
+<ul>
+<li>Once the hierarchy is imposed on the network, it is followed and possibility of direct paths is ignored. This may lead to sub optimal routing.
+</li></ul>
+
+<h3>Source Routing</h3>
+Source routing is similar in concept to virtual circuit routing. It is implemented as under:
+<ul>
+<li>Initially, a path between nodes wishing to communicate is found out, either by flooding or by any other suitable method.
+</li><li>This route is then specified in the header of each packet routed between these two nodes. A route may also be specified partially, or in terms of some intermediate hops.
+</li></ul>
+Advantages:
+<ul>
+<li>Bridges do not need to lookup their routing tables since the path is already specified in the packet itself.
+</li><li>The throughput of the bridges is higher, and this may lead to better utilization of bandwidth, once a route is established.
+</li></ul>
+Disadvantages:
+<ul>
+<li>Establishing the route at first needs an expensive search method like flooding. 
+</li><li>To cope up with dynamic relocation of nodes in a network, frequent updates of tables are required, else all packets would be sent in wrong direction. This too is expensive.
+</li></ul>
+
+<h3>Policy Based Routing</h3>
+In this type of routing, certain restrictions are put on the type of packets accepted and sent. e.g.. The IIT- K router may decide to handle traffic pertaining to its departments only, and reject packets from other routes. This kind of routing is used for links with very low capacity or for security purposes.
+
+<h3>Shortest Path Routing</h3>
+Here, the central question dealt with is 'How to determine the optimal path for routing ?'  Various algorithms are used to determine the optimal routes with respect to some predetermined criteria. A network is represented as a graph, with its terminals as nodes and the links as edges. A 'length' is associated with each edge, which represents the cost of using the link for transmission. Lower the cost, more suitable is the link. The cost is determined depending upon the criteria to be optimized. Some of the important ways of determining the cost are:
+<ul>
+<li><b>Minimum number of hops: </b>If each link is given a unit cost, the shortest path is the one with minimum number of hops. Such a route is easily obtained by a breadth first search method.  This is easy to implement but ignores load, link capacity etc. 
+  
+</li><li><b>Transmission and Propagation Delays: </b>If the cost is fixed as a function of  transmission and propagation delays, it will reflect the link capacities and the geographical distances. However these costs are essentially static and do not consider the varying load conditions.
+
+</li><li><b>Queuing Delays: </b>If the cost of a link is determined through its queuing delays, it takes care of the varying load conditions, but not of the propagation delays.
+</li></ul>
+Ideally, the cost  parameter should consider all the above mentioned factors, and it should be updated periodically to reflect the changes in the loading conditions. However, if the routes are changed according to the load, the load changes again. This feedback effect between routing and load can lead to undesirable oscillations and sudden swings.
+
+<h3>Routing Algorithms</h3>
+As mentioned
+above, the shortest paths are calculated using suitable algorithms on the
+graph representations of the networks.&nbsp; Let the network be represented
+by graph G ( V, E ) and let the number of nodes be 'N'.&nbsp;&nbsp; For
+all the algorithms discussed below, the costs associated with the links
+are assumed to be positive.&nbsp; A node has zero cost w.r.t itself.&nbsp;
+Further, all the links are assumed to be symmetric, i.e.&nbsp; if&nbsp;
+d<sub>i,j&nbsp;&nbsp;</sub> =&nbsp; cost of link&nbsp; from node i to node
+j, then d <sub>i,j</sub> = d <sub>j,i</sub> .&nbsp; The graph is assumed
+to be complete. If there exists no edge between two nodes, then a link
+of infinite cost is assumed.&nbsp; The algorithms given below find costs
+of the paths from all nodes to a particular node; the problem is equivalent
+to finding the cost of paths from a source to all destinations.
+
+<h3>Bellman-Ford Algorithm</h3>
+This algorithm iterates on the number
+of edges in a path to obtain the shortest path. Since the number of hops
+possible is limited (cycles are implicitly not allowed),&nbsp; the algorithm
+terminates giving the shortest path.
+
+<p><b>Notation: </b>
+<br>&nbsp;&nbsp;&nbsp; d <sub>i,j&nbsp;</sub>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+=&nbsp;&nbsp; Length of path between nodes i and j,&nbsp; indicating the
+cost of the link.
+<br>&nbsp;&nbsp;&nbsp; h&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+=&nbsp;&nbsp; Number of hops.
+<br>&nbsp;&nbsp;&nbsp; D[ i,h]&nbsp;&nbsp; =&nbsp;&nbsp;
+Shortest path length from node i to node 1, with upto 'h' hops.
+<br>&nbsp;&nbsp;&nbsp; D[ 1,h]&nbsp; =&nbsp;&nbsp; 0&nbsp;
+for all h .
+<br>&nbsp;
+<br><b>Algorithm :</b>
+<br>&nbsp;
+<br>&nbsp;&nbsp;&nbsp; Initial condition&nbsp; :&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+D[ i, 0]&nbsp; =&nbsp; infinity,&nbsp; for all&nbsp; i&nbsp; ( i != 1 )
+
+</p><p>&nbsp;&nbsp;&nbsp; Iteration&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+D[i, h+1]&nbsp; = min<sub> </sub>{ d<sub>i,j</sub> + D[j,h] }&nbsp;&nbsp;&nbsp;&nbsp;
+over all values of j .
+
+</p><p>&nbsp;&nbsp;&nbsp; Termination&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+The algorithm terminates when
+
+</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+D[i, h]&nbsp; =&nbsp; D [ i,&nbsp; h+1]&nbsp;&nbsp;&nbsp;&nbsp; for all&nbsp;
+i .
+
+</p><p><b>Principle: </b><br>
+For zero hops,&nbsp; the minimum length path has length of infinity, for
+every node.&nbsp; For one hop the shortest-path length associated with
+a node is equal to the length of the edge between&nbsp; that node and node
+1. Hereafter, we increment the number of hops allowed, (from h to h+1 )
+and find out whether a shorter path exists through each of the&nbsp; other
+nodes.&nbsp; If&nbsp; it exists, say through node 'j',&nbsp; then its length
+must be the sum of the lengths between these two nodes (i.e.&nbsp; d<sub>i,j</sub>
+) and the shortest path between j and 1 obtainable in upto h paths. If
+such a path doesn't exist, then the path length remains the same.
+The algorithm is guaranteed to terminate,
+since there are utmost N nodes, and so N-1 paths. It has time complexity
+of O ( N<sup>3</sup> ) .
+
+</p><h3>Dijkstra's Algorithm</h3>
+
+<p>
+<b>Notation:</b><br>
+D<sub>i&nbsp;</sub>&nbsp; =&nbsp;&nbsp;&nbsp;&nbsp; Length of shortest
+path from node 'i' to node 1.
+<br>d<sub>i,j&nbsp;</sub> =&nbsp;&nbsp;&nbsp;&nbsp; Length of path between
+nodes i and j .
+
+</p><p><b>Algorithm</b><br>
+Each node j&nbsp; is&nbsp; labeled with Dj, which is an estimate of cost
+of path from node j to node 1. Initially, let the estimates be infinity,
+indicating that nothing is known about the paths.&nbsp; We now iterate
+on the length of paths, each time revising our estimate to lower values,
+as we obtain them. Actually, we divide the nodes into two groups ; the first one, called set P contains the nodes whose shortest distances have been found, and the other Q containing
+all the remaining nodes. Initially P contains only the node 1. At each step,&nbsp;
+we select the node that has minimum cost path to node 1. This node is transferred
+to set P.&nbsp; At the first step, this corresponds to shifting the node
+closest to 1 in P. Its minimum cost to node 1 is now known. At the next
+step, select the next closest node from set Q and update the labels corresponding
+to each node using :
+
+</p><p><b></b></p><center><b>D<sub>j&nbsp;</sub>&nbsp;&nbsp; =&nbsp;&nbsp; min [ D<sub>j</sub>&nbsp;
+,&nbsp; D<sub>i</sub>&nbsp; +&nbsp; d<sub>j,i&nbsp;</sub>&nbsp; ]</b></center>
+
+<p><font color="#000000">Finally, after N-1 iterations, the&nbsp;
+shortest paths for all nodes are known, and the algorithm terminates.
+<br>&nbsp;
+
+</font></p><p><font color="#000000"><b>Principle</b><br>
+Let the closest node to 1 at some step be i. Then i is shifted to P. Now,
+for each node j , the closest path to 1 either passes through i or it doesn't.&nbsp;
+In the first case Dj remains the same. In the second case, the revised
+estimate of D<sub>j</sub> is the sum D<sub>i&nbsp;</sub> +&nbsp; d<sub>i,j
+</sub>. So we take the minimum of these two cases and update D<sub>j </sub>accordingly.&nbsp;
+As each of the nodes get transferred to set P, the estimates get closer
+to the lowest possible value. When a node is transferred, its shortest
+path length is known. So finally all the nodes are in P and the D<sub>j
+</sub>'s represent the minimum costs.
+
+The algorithm is guaranteed to terminate in N-1 iterations and&nbsp; its complexity is
+O( N<sup>2</sup> ).
+
+</font></p><h3><font color="#000000">The Floyd Warshall Algorithm</font></h3><font color="#000000">
+This algorithm iterates on the set of nodes that can be used as intermediate nodes on
+paths. This set grows from a single node ( say node 1 ) at start to finally
+all the nodes of the graph.&nbsp; At each iteration, we find the shortest
+path using given set of nodes as intermediate nodes, so that finally all
+the shortest paths are obtained.
+
+<p><b>Notation</b><br>
+D<sub>i,j</sub> [n]&nbsp;&nbsp;&nbsp;&nbsp; =&nbsp;&nbsp;&nbsp;&nbsp; Length
+of shortest&nbsp; path between the nodes i and j using only the nodes 1,2,....n
+as intermediate nodes.
+
+</p><p><b>Initial Condition</b><br>
+Di,j[0]&nbsp;&nbsp;&nbsp;&nbsp; =&nbsp;&nbsp;&nbsp;&nbsp; d<sub>i,j&nbsp;</sub>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+for all nodes i,j .
+
+</p><p><b>Algorithm</b><br>
+Initially,&nbsp; n = 0.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; At each iteration,
+add next node to n. i.e.&nbsp;&nbsp; For&nbsp; n = 1,2, .....N-1 ,
+<br><br>Di,j[n + 1]&nbsp;&nbsp;&nbsp; =&nbsp; min&nbsp; {&nbsp; D<sub>i,j</sub>[n]
+,&nbsp;&nbsp; D<sub>i,n+1</sub>[n]&nbsp; + D<sub>n+1,j</sub>[n]&nbsp; }
+
+</p><p><b>Principle</b><br>
+Suppose the shortest path between i and j using nodes 1,2,...n is known.
+Now, if node n+1 is allowed to be an intermediate node, then the shortest
+path under new conditions either passes through node n+1 or it doesn't.
+If it does not pass through the node n+1, then D<sub>i,j</sub>[n+1] is
+same as D<sub>i,j</sub>[n] .&nbsp; Else, we find the cost of the new route,
+which is obtained from the sum,&nbsp; D<sub>i,n+1</sub>[n] + D<sub>n+1,j</sub>[n].
+So we take the minimum of these two cases at each step.&nbsp; After adding
+all the nodes to the set of intermediate nodes, we obtain the shortest
+paths between all pairs of nodes together.&nbsp; The complexity of&nbsp;
+Floyd-Warshall algorithm is O ( N<sup>3</sup> ).
+
+</p><p>It is observed that all the three algorithms mentioned above give comparable performance,
+depending upon the exact topology of the network.
+
+
+</p><hr color="BLACK">
+<a href="https://www.cse.iitk.ac.in/users/dheeraj/cs425/lec12.html#top">back to top</a><br>
+<a href="https://www.cse.iitk.ac.in/users/dheeraj/cs425/lec11.html">Prev</a>|&nbsp;<a href="https://www.cse.iitk.ac.in/users/dheeraj/cs425/lec13.html">Next </a>|
+<a href="https://www.cse.iitk.ac.in/users/dheeraj/cs425/index.html">Index</a>
+<p></p>
+
+
+</font></body></html>
